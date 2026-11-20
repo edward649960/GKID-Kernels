@@ -32,6 +32,12 @@ for mod in rtw88_8812a rtw88_8812au rtw88_8814a rtw88_8814au \
 done
 
 load r8188eu
+load mt76
+load mt76-usb
+load mt76x02-lib
+load mt76x02-usb
+load mt76x2-common
+load mt76x2u
 
 echo "rtw88 modules loaded" > /dev/kmsg
 lsmod | grep -E "rtw|mac80211|cfg80211" > /dev/kmsg 2>&1
