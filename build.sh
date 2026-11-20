@@ -274,6 +274,9 @@ AK3_ZIP_NAME=${AK3_ZIP_NAME//VARIANT/$VARIANT}
 
 log "Applying configs..."
 source "$WORKDIR/configs/gki_defconfig.sh"
+if [ "$NH" = "true" ]; then
+  config --module CONFIG_MT76x2U
+fi
 
 if [ "${TODO:-kernel}" = "kernel" ]; then
   LATEST_COMMIT_HASH=$(git rev-parse --short HEAD)
