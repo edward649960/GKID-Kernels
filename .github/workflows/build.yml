@@ -188,7 +188,7 @@ jobs:
           mkdir -p "$WKSU/lkm"
           mkdir -p "$WKSU/system/etc/firmware/rtw88"
 
-          for mod in rfkill cfg80211 mac80211 'rtw88*' r8188eu libarc4; do
+          for mod in rfkill cfg80211 mac80211 'rtw88*' r8188eu libarc4 'mt76*'; do
             found=$(find out/ -iname "${mod}.ko" 2>/dev/null)
             if [ -n "$found" ]; then
               echo "$found" | xargs -I{} cp {} "$WKSU/lkm/"
@@ -200,6 +200,8 @@ jobs:
           if [ -n "$(ls -A "$WKSU/lkm" 2>/dev/null)" ]; then
             sed -i "s/version=.*/version=${{ env.RELEASE }}-${{ matrix.kernel_version }}-${{ env.VARIANT }}/" "$WKSU/module.prop"
             cp ksrc/drivers/net/wireless/realtek/rtw88/firmware/* "$WKSU/system/etc/firmware/rtw88" 2>/dev/null || echo "[-] rtw88 firmware not found, skipping"
+            curl -fsSL "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/main/mediatek/mt7662.bin" -o "$WKSU/system/etc/firmware/mt7662.bin" || echo "[-] mt7662.bin download failed"
+            curl -fsSL "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/main/mediatek/mt7662_rom_patch.bin" -o "$WKSU/system/etc/firmware/mt7662_rom_patch.bin" || echo "[-] mt7662_rom_patch.bin download failed"
             echo "Modules found:"
             ls -la "$WKSU/lkm/"
             mkdir -p artifacts
@@ -353,6 +355,7 @@ jobs:
           body_path: release_body.md
 
       - name: Upload to Telegram
+        if: false
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
